@@ -1,0 +1,70 @@
+version: "3.9"
+
+# =============================================================================
+# Docker Compose — Yocto build environment for Jetson Nano Orin
+# =============================================================================
+
+services:
+  yocto-build:
+    build:
+      context: ..
+      dockerfile: .devcontainer/Dockerfile
+      args:
+        # Match your host UID/GID so volume files are owned correctly
+        USER_UID: ${HOST_UID:-1000}
+        USER_GID: ${HOST_GID:-1000}
+
+    image: yocto-jetson-orin:latest
+    container_name: yocto_build_env
+
+    # Keep STDIN open for interactive BitBake sessions
+    stdin_open: true
+    tty: true
+
+    # -------------------------------------------------------------------------
+    # Volume mounts
+    #   - project root     : full project visible inside container (includes
+    #                        .devcontainer, .gitignore, README, scripts, etc.)
+    #   - yocto-workspace  : Yocto build tree (subfolder of project root)
+    #   - dl_dir           : shared download cache (persists between builds)
+    #   - sstate_cache     : shared sstate cache  (persists between builds)
+    # -------------------------------------------------------------------------
+    volumes:
+      - ..:/home/yocto/project
+      - ../yocto-workspace:/home/yocto/yocto-workspace
+      - yocto_downloads:/home/yocto/downloads
+      - yocto_sstate:/home/yocto/sstate-cache
+
+    # -------------------------------------------------------------------------
+    # Set the host timezone inside the container
+    # -------------------------------------------------------------------------
+    environment:
+      - TZ=${TZ:-UTC}
+      - LANG=en_US.UTF-8
+      - LC_ALL=en_US.UTF-8
+      # Poky branch to clone on first container start (change to mickledore, scarthgap, etc.)
+      - POKY_BRANCH=${POKY_BRANCH:-kirkstone}
+
+    # -------------------------------------------------------------------------
+    # Resource limits — Yocto builds are CPU/RAM intensive.
+    # Adjust cpus / memory to your host machine's capacity.
+    # -------------------------------------------------------------------------
+    deploy:
+      resources:
+        limits:
+          # Allow up to 16 parallel threads (adjust to nproc on your machine)
+          cpus: "16.0"
+          memory: 16G
+
+    # Default command — opens an interactive bash shell
+    command: /bin/bash
+
+# =============================================================================
+# Named volumes for persistent caches
+# These survive container restarts and dramatically speed up rebuilds.
+# =============================================================================
+volumes:
+  yocto_downloads:
+    name: yocto_dl_cache
+  yocto_sstate:
+    name: yocto_sstate_cache

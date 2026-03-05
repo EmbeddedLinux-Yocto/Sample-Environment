@@ -1,0 +1,26 @@
+{
+  "name": "Yocto Build Environment (Jetson Nano Orin)",
+
+  // Use the existing docker-compose setup
+  "dockerComposeFile": "docker-compose.yml",
+  "service": "yocto-build",
+  "workspaceFolder": "/home/yocto/project",
+
+  // Shut down the compose stack when VS Code closes
+  "shutdownAction": "stopCompose",
+
+  // Poky cloning is handled by entrypoint.sh on every container start
+  // (idempotent: only clones if /home/yocto/yocto-workspace/poky is absent).
+
+  // VS Code extensions to install inside the container
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-vscode.cpptools",
+        "ms-python.python",
+        "timonwong.shellcheck",
+        "foxundermoon.shell-format"
+      ]
+    }
+  }
+}

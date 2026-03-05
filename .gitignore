@@ -1,0 +1,14 @@
+# Yocto build output — too large for git
+_build/
+
+# Yocto source tree — managed by Dockerfile, not git
+yocto-workspace/
+
+# Docker named volumes are managed by Docker, not git
+# (yocto_dl_cache, yocto_sstate_cache)
+
+# Editor / OS artifacts
+.vscode/
+*.swp
+*~
+.DS_Store
