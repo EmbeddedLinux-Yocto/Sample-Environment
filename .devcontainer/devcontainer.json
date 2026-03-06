@@ -9,6 +9,11 @@
   // Shut down the compose stack when VS Code closes
   "shutdownAction": "stopCompose",
 
+  // Create the shared cache volumes if they don't already exist.
+  // This runs on the HOST before the container is created, so `external: true`
+  // volumes in docker-compose.yml are always present when needed.
+  "initializeCommand": "docker volume inspect yocto_dl_cache > /dev/null 2>&1 || docker volume create yocto_dl_cache && docker volume inspect yocto_sstate_cache > /dev/null 2>&1 || docker volume create yocto_sstate_cache",
+
   // Poky cloning is handled by entrypoint.sh on every container start
   // (idempotent: only clones if /home/yocto/yocto-workspace/poky is absent).
 
