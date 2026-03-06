@@ -1,7 +1,7 @@
 # Yocto build output — too large for git
-_build/
-build/
-
+_build/*
+build/*
+!build/conf
 # Yocto source tree — managed by entrypoint, not git
 # Keep the directory itself (.gitkeep) so Docker bind-mount gets correct ownership
 yocto-workspace/*
