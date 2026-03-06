@@ -1,8 +1,10 @@
 # Yocto build output — too large for git
 _build/
 
-# Yocto source tree — managed by Dockerfile, not git
-yocto-workspace/
+# Yocto source tree — managed by entrypoint, not git
+# Keep the directory itself (.gitkeep) so Docker bind-mount gets correct ownership
+yocto-workspace/*
+!yocto-workspace/.gitkeep
 
 # Docker named volumes are managed by Docker, not git
 # (yocto_dl_cache, yocto_sstate_cache)
